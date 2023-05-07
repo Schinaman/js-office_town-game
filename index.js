@@ -39,8 +39,8 @@ collisionsMap.forEach((row, i) => {
     if (symbol === 2888) {
       boundaries.push(new Boundary({
         position: {
-          x: Boundary.width,
-          y: Boundary.height
+          x: Boundary.width + offset.x,
+          y: Boundary.height + offset.y
         }
       })
       ) //cria um objeto Boundary para cada Boundary
@@ -60,14 +60,41 @@ playerImage.src = './img/Adam_idle_16x16.png'
 
 //CLASS
 class Sprite {
-  constructor({ position, velocity, image }) {
+  constructor({ position, velocity, image, frames = { max: 1 } }) {
     this.position = position
     this.image = image
+    this.frames = frames
   }
   draw() {
-    c.drawImage(this.image, this.position.x, this.position.y)
+    c.drawImage(
+    //Crop position: only one charac
+      this.image,
+      0, //croping ref inicio width
+      0, //croping ref inicio height
+      this.image.width / this.frames.max, //crop width - largura de 1 boneco
+      this.image.height,                  //crop heith - altura de 1 boneco
+    //Location (canvas)
+      this.position.x, //x coord //pra player tela/2(centro sprite)
+      this.position.y, //y coord
+    //what will actually render
+      this.image.width / this.frames.max,
+      this.image.height
+    )
   }
 }
+
+const playerWidthPixels = 256
+const playerHeightPixels = 128
+const player = new Sprite({
+  position: {
+    x: canvas.width / 2 - playerWidthPixels / 4 / 2,
+    y: canvas.height / 2 - playerHeightPixels / 2
+  },
+  image: playerImage,
+  frames: {
+    max: 4
+  }
+})
 
 const background = new Sprite({
   position: {
@@ -77,22 +104,6 @@ const background = new Sprite({
   image: image
 })
 
-function getCharacter1() {
-  c.drawImage(
-    playerImage,
-    //Crop position: only one charac
-    3 * playerImage.width / 4, //croping ref inicio width
-    0, //croping ref inicio height
-    playerImage.width / 4, //crop width - largura de 1 boneco
-    playerImage.height, //crop heith - altura de 1 boneco
-    //Location (canvas)
-    canvas.width / 2 - playerImage.width / 4 / 2, //x coord
-    canvas.height / 2 - playerImage.height / 2, //y coord
-    //what will actually render
-    playerImage.width / 4, //crop width - largura de 1 boneco
-    playerImage.height
-  )
-}
 
 const keys = {
   w: { pressed: false },
@@ -100,7 +111,6 @@ const keys = {
   s: { pressed: false },
   d: { pressed: false }
 }
-
 
 const testBoundary = new Boundary({
   position: {
@@ -120,10 +130,10 @@ function animate() {
     boundary.draw()
   })
   testBoundary.draw()
-  getCharacter1()
+  player.draw()
 
   //collision detection
-  if (playerImage.position.x + player.width)
+  //if (playerImage.position.x + player.width)
 
   //Moving
   if (keys.w.pressed && lastKey === 'w') {
@@ -132,7 +142,7 @@ function animate() {
     })
   }  else if (keys.a.pressed && lastKey === 'a') {
     movables.forEach((movable) => {
-      movable.position.y += 3
+      movable.position.x += 3
     })
   }  else if (keys.s.pressed && lastKey === 's') {
     movables.forEach((movable) => {
