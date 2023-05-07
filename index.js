@@ -1,7 +1,7 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
-console.log(collisions)
+
 canvas.width = 1024
 canvas.height = 576
 
@@ -48,7 +48,7 @@ collisionsMap.forEach((row, i) => {
   })
 })
 
-console.log(boundaries)
+
 
 //Images
 const image = new Image()
@@ -64,26 +64,34 @@ class Sprite {
     this.position = position
     this.image = image
     this.frames = frames
+
+    this.image.onload = () => { //imagem precisa primeiro carregar p pegar as dimensoes 'w' e 'h'
+      this.width = this.image.width / this.frames.max
+      this.height = this.image.height
+      console.log(this.width)
+      console.log(this.height)
+    }
+
   }
   draw() {
     c.drawImage(
-    //Crop position: only one charac
+      //Crop position: only one charac
       this.image,
       0, //croping ref inicio width
       0, //croping ref inicio height
       this.image.width / this.frames.max, //crop width - largura de 1 boneco
       this.image.height,                  //crop heith - altura de 1 boneco
-    //Location (canvas)
+      //Location (canvas)
       this.position.x, //x coord //pra player tela/2(centro sprite)
       this.position.y, //y coord
-    //what will actually render
+      //what will actually render
       this.image.width / this.frames.max,
       this.image.height
     )
   }
 }
 
-const playerWidthPixels = 256
+const playerWidthPixels = 128 //256
 const playerHeightPixels = 128
 const player = new Sprite({
   position: {
@@ -121,41 +129,53 @@ const testBoundary = new Boundary({
 
 
 const movables = [background, testBoundary]
+function rectangularCollision({ rectangle1, rectangle2 }) {
+  return (
+    rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&
+    rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&
+    rectangle1.position.y + 64 <= rectangle2.position.y + rectangle2.height &&
+    rectangle1.position.y + rectangle1.height >= rectangle2.position.y)
+}
+
 function animate() {
   window.requestAnimationFrame(animate) // chamada recusiva - loop infinito
 
-
   background.draw()
-  boundaries.forEach(boundary => {
-    boundary.draw()
-  })
+  boundaries.forEach(boundary => { boundary.draw() })
   testBoundary.draw()
   player.draw()
 
+
   //collision detection
-  //if (playerImage.position.x + player.width)
+  if (
+    rectangularCollision({
+      rectangle1: player,
+      rectangle2: testBoundary
+    })) {
+    console.log('colliding')
+  }
 
   //Moving
   if (keys.w.pressed && lastKey === 'w') {
     movables.forEach((movable) => {
       movable.position.y += 3
     })
-  }  else if (keys.a.pressed && lastKey === 'a') {
+  } else if (keys.a.pressed && lastKey === 'a') {
     movables.forEach((movable) => {
       movable.position.x += 3
     })
-  }  else if (keys.s.pressed && lastKey === 's') {
+  } else if (keys.s.pressed && lastKey === 's') {
     movables.forEach((movable) => {
       movable.position.y -= 3
     })
-  }  else if (keys.d.pressed && lastKey === 'd') {
+  } else if (keys.d.pressed && lastKey === 'd') {
     movables.forEach((movable) => {
       movable.position.x -= 3
     })
   }
-
 }
 animate()
+
 
 let lastKey = ''
 window.addEventListener('keydown', (e) => {
