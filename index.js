@@ -1,13 +1,52 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
+console.log(collisions)
 canvas.width = 1024
 canvas.height = 576
 
-c.fillStyle = 'white'
-c.fillRect(0, 0, canvas.width, canvas.height)
+//Cria subarrays de rows para cada collision
+const mapWidthTile = 70
+const mapHeightTile = 40
+const collisionsMap = []
+for (let i = 0; i < collisions.length; i += mapWidthTile) {
+  collisionsMap.push(collisions.slice(i, mapWidthTile + i))
+}
+
+class Boundary {
+  static width = 16 * 4
+  static height = 16 * 4
+  constructor({ position }) {
+    this.position = position
+    this.width = 4 * 16 //pixels
+    this.height = 4 * 16 //pixels
+  }
+
+  draw() {
+    c.fillStyle = 'red'
+    c.fillRect(this.position.x, this.position.y, this.width, this.height)
+  }
+}
 
 
+const boundaries = []
+collisionsMap.forEach((row, i) => {
+  row.forEach((symbol, j) => {
+    if (symbol === 2888) {
+      boundaries.push(new Boundary({
+        position: {
+          x: Boundary.width,
+          y: Boundary.height
+        }
+      })
+      ) //cria um objeto Boundary para cada Boundary
+    }
+  })
+})
+
+console.log(boundaries)
+
+//Images
 const image = new Image()
 image.src = './img/OfficeTown.png'
 
@@ -58,10 +97,24 @@ const keys = {
   d: { pressed: false }
 }
 
+const testBoundary = new Boundary({
+  position:{
+    x: 400,
+    y: 400
+  }
+})
+
 function animate() {
   window.requestAnimationFrame(animate) // chamada recusiva - loop infinito
+  
+
   background.draw()
+  boundaries.forEach(boundary => {
+    boundary.draw()
+  })
+  testBoundary.draw()
   getCharacter1()
+  
 
   if (keys.w.pressed && lastKey === 'w') background.position.y += 3
   else if (keys.a.pressed && lastKey === 'a') background.position.x += 3
