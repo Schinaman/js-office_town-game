@@ -30,6 +30,10 @@ class Boundary {
 
 
 const boundaries = []
+const offset = {
+  x: -1185,
+  y: -800
+}
 collisionsMap.forEach((row, i) => {
   row.forEach((symbol, j) => {
     if (symbol === 2888) {
@@ -67,8 +71,8 @@ class Sprite {
 
 const background = new Sprite({
   position: {
-    x: -1185,
-    y: -800
+    x: offset.x,
+    y: offset.y
   },
   image: image
 })
