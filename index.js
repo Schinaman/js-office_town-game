@@ -97,16 +97,19 @@ const keys = {
   d: { pressed: false }
 }
 
+
 const testBoundary = new Boundary({
-  position:{
+  position: {
     x: 400,
     y: 400
   }
 })
 
+
+const movables = [background, testBoundary]
 function animate() {
   window.requestAnimationFrame(animate) // chamada recusiva - loop infinito
-  
+
 
   background.draw()
   boundaries.forEach(boundary => {
@@ -114,12 +117,29 @@ function animate() {
   })
   testBoundary.draw()
   getCharacter1()
-  
 
-  if (keys.w.pressed && lastKey === 'w') background.position.y += 3
-  else if (keys.a.pressed && lastKey === 'a') background.position.x += 3
-  else if (keys.s.pressed && lastKey === 's') background.position.y -= 3
-  else if (keys.d.pressed && lastKey === 'd') background.position.x -= 3
+  //collision detection
+  if (playerImage.position.x + player.width)
+
+  //Moving
+  if (keys.w.pressed && lastKey === 'w') {
+    movables.forEach((movable) => {
+      movable.position.y += 3
+    })
+  }  else if (keys.a.pressed && lastKey === 'a') {
+    movables.forEach((movable) => {
+      movable.position.y += 3
+    })
+  }  else if (keys.s.pressed && lastKey === 's') {
+    movables.forEach((movable) => {
+      movable.position.y -= 3
+    })
+  }  else if (keys.d.pressed && lastKey === 'd') {
+    movables.forEach((movable) => {
+      movable.position.x -= 3
+    })
+  }
+
 }
 animate()
 
