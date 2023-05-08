@@ -52,7 +52,7 @@ const player = new Sprite({
   },
   image: playerImage,
   frames: {
-    max: 4
+    max: 3
   }
 })
 
@@ -103,8 +103,10 @@ function animate() {
 
   //Moving
   let moving = true
+  player.moving = false
   if (keys.w.pressed && lastKey === 'w') {
     //collision detection
+    player.moving = true
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
       if (
@@ -129,6 +131,7 @@ function animate() {
         movable.position.y += 3
       }) //MOVING LEFT
   } else if (keys.a.pressed && lastKey === 'a') {
+    player.moving = true
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
       if (
@@ -152,6 +155,7 @@ function animate() {
         movable.position.x += 3
       }) //MOVING DOWN
   } else if (keys.s.pressed && lastKey === 's') {
+    player.moving = true
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
       if (
@@ -175,6 +179,7 @@ function animate() {
       movable.position.y -= 3
     })//MOVING RIGHT
   } else if (keys.d.pressed && lastKey === 'd') {
+    player.moving = true
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
       if (
