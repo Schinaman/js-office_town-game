@@ -70,8 +70,8 @@ class Sprite {
     this.frames = frames
 
     this.image.onload = () => { //imagem precisa primeiro carregar p pegar as dimensoes 'w' e 'h'
-      this.width = this.image.width / this.frames.max -10 // TODO gambiarra p n colidir
-      this.height = this.image.height - 10 // TODO  gambiarra p n colidir
+      this.width = this.image.width / this.frames.max
+      this.height = this.image.height
       console.log(this.width)
       console.log(this.height)
     }
@@ -116,6 +116,14 @@ const background = new Sprite({
   image: image
 })
 
+const foreground = new Sprite({
+  position: {
+    x: offset.x,
+    y: offset.y
+  },
+  image: foregroundImage
+})
+
 
 const keys = {
   w: { pressed: false },
@@ -125,7 +133,7 @@ const keys = {
 }
 
 
-const movables = [background, ...boundaries]
+const movables = [background, ...boundaries, foreground]
 function rectangularCollision({ rectangle1, rectangle2 }) {
   return (
     rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&
@@ -142,7 +150,8 @@ function animate() {
   background.draw()
   boundaries.forEach((boundary) => { boundary.draw() })
   player.draw()
-da
+  foreground.draw()
+
 
   //Moving
   let moving = true
